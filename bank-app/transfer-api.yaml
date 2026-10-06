@@ -34,7 +34,7 @@ spec:
               value: "5000000"
           readinessProbe:
             httpGet:
-              path: /ready
+              path: /readyz
               port: http
             periodSeconds: 5
           livenessProbe:
