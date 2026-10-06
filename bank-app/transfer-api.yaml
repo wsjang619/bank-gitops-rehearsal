@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: acrbankuser501006.azurecr.io/bank-app:9.9
+          image: acrbankuser501006.azurecr.io/bank-app:1.1
           ports:
             - name: http
               containerPort: 8080
