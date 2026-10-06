@@ -1,0 +1,17 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: notification-worker
+  namespace: bank-app
+spec:
+  scaleTargetRef:
+    name: notification-worker
+  minReplicaCount: 1
+  maxReplicaCount: 3          # 파티션 수보다 크게 해도 소용없음
+  triggers:
+    - type: kafka
+      metadata:
+        bootstrapServers: bank-kafka-kafka-bootstrap.bank-data.svc:9092
+        consumerGroup: notification-service
+        topic: transfer-events
+        lagThreshold: "50"     # 컨슈머 1개당 감당할 Lag

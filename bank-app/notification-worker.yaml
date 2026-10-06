@@ -6,7 +6,6 @@ metadata:
   labels:
     app: notification-worker
 spec:
-  replicas: 3
   selector:
     matchLabels:
       app: notification-worker
