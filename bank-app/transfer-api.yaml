@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transfer-api
+  namespace: bank-app
+  labels:
+    app: transfer-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: transfer-api
+  template:
+    metadata:
+      labels:
+        app: transfer-api
+    spec:
+      containers:
+        - name: api
+          image: acrbankuser501006.azurecr.io/bank-app:1.0
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: bank-config
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: bank-mongo-cred
+                  key: MONGO_URI
+            - name: DAILY_LIMIT
+              value: "5000000"
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: transfer-api
+  namespace: bank-app
+  labels:
+    app: transfer-api
+spec:
+  type: LoadBalancer
+  selector:
+    app: transfer-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: transfer-api
+  namespace: bank-app
+spec:
+  selector:
+    matchLabels:
+      app: transfer-api
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s

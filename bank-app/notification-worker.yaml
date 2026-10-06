@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-worker
+  namespace: bank-app
+  labels:
+    app: notification-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-worker
+  template:
+    metadata:
+      labels:
+        app: notification-worker
+    spec:
+      containers:
+        - name: worker
+          image: acrbankuser501006.azurecr.io/bank-app:1.0
+          command: ["python", "worker.py"]
+          envFrom:
+            - configMapRef:
+                name: bank-config
+          env:
+            - name: PROCESS_DELAY_MS
+              value: "0"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
