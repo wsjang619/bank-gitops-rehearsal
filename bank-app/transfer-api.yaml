@@ -31,7 +31,7 @@ spec:
                   name: bank-mongo-cred
                   key: MONGO_URI
             - name: DAILY_LIMIT
-              value: "5,000,000"
+              value: "5000000"
           readinessProbe:
             httpGet:
               path: /readyz
