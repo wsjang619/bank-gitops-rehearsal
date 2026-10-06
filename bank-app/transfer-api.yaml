@@ -6,7 +6,7 @@ metadata:
   labels:
     app: transfer-api
 spec:
-  replicas: 3
+  replicas: 20
   selector:
     matchLabels:
       app: transfer-api
